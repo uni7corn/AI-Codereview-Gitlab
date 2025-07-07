@@ -12,3 +12,4 @@ conf/.env
 .pyc
 __pycache__/
 .cursorignore
+.cursor
