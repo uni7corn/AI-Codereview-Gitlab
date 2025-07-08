@@ -54,6 +54,10 @@ class ReviewService:
                         if column not in current_columns:
                             cursor.execute(f"ALTER TABLE {table} ADD COLUMN {column} INTEGER DEFAULT 0")
                 conn.commit()
+                # 添加时间字段索引（默认查询就需要时间范围）
+                conn.execute('CREATE INDEX IF NOT EXISTS idx_push_review_log_updated_at ON '
+                             'push_review_log (updated_at);')
+                conn.execute('CREATE INDEX IF NOT EXISTS idx_mr_review_log_updated_at ON mr_review_log (updated_at);')
         except sqlite3.DatabaseError as e:
             print(f"Database initialization failed: {e}")
 
