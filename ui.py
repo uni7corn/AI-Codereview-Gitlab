@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+import math
+
+import streamlit as st
+
+# 设置Streamlit主题 - 必须是第一个st命令
+st.set_page_config(layout="wide", page_title="AI代码审查平台", page_icon="🤖", initial_sidebar_state="expanded")
+
 import datetime
 import os
 import json
@@ -6,17 +13,12 @@ import hashlib
 import hmac
 import base64
 import time
-
 import pandas as pd
-import streamlit as st
 from dotenv import load_dotenv
 import matplotlib.pyplot as plt
 from biz.service.review_service import ReviewService
 from matplotlib.ticker import MaxNLocator
 from streamlit_cookies_manager import CookieManager
-
-# 设置Streamlit主题 - 必须是第一个st命令
-st.set_page_config(layout="wide", page_title="AI代码审查平台", page_icon="🤖", initial_sidebar_state="expanded")
 
 load_dotenv("conf/.env")
 
@@ -28,26 +30,28 @@ USER_CREDENTIALS = {
 }
 
 # 用于生成和验证token的密钥
-SECRET_KEY = os.getenv("SECRET_KEY", "fac8cf149bdd616c07c1a675c4571ccacc40d7f7fe16914cfe0f9f9d966bb773")
+SECRET_KEY = os.getenv("DASHBOARD_SECRET_KEY", "fac8cf149bdd616c07c1a675c4571ccacc40d7f7fe16914cfe0f9f9d966bb773")
 
 # 初始化cookie管理器
 cookies = CookieManager()
+
 
 def generate_token(username):
     """生成包含时间戳的认证token"""
     timestamp = str(int(time.time()))
     message = f"{username}:{timestamp}"
-    
+
     # 使用HMAC-SHA256生成签名
     signature = hmac.new(
         SECRET_KEY.encode(),
         message.encode(),
         hashlib.sha256
     ).digest()
-    
+
     # 将消息和签名编码为base64
     token = base64.b64encode(f"{message}:{base64.b64encode(signature).decode()}".encode()).decode()
     return token
+
 
 def verify_token(token):
     """验证token的有效性并提取用户名"""
@@ -56,35 +60,36 @@ def verify_token(token):
         decoded = base64.b64decode(token.encode()).decode()
         message, signature = decoded.rsplit(":", 1)
         username, timestamp = message.split(":", 1)
-        
+
         # 验证签名
         expected_signature = hmac.new(
             SECRET_KEY.encode(),
             message.encode(),
             hashlib.sha256
         ).digest()
-        
+
         actual_signature = base64.b64decode(signature)
-        
+
         if not hmac.compare_digest(expected_signature, actual_signature):
             return None
-            
+
         # 检查token是否过期（30天）
         if int(time.time()) - int(timestamp) > 30 * 24 * 60 * 60:
             return None
-            
+
         return username
     except:
         return None
+
 
 # 检查登录状态
 def check_login_status():
     if not cookies.ready():
         st.stop()
-        
+
     if 'login_status' not in st.session_state:
         st.session_state['login_status'] = False
-    
+
     # 尝试从cookie获取token
     auth_token = cookies.get('auth_token')
     if auth_token:
@@ -93,15 +98,16 @@ def check_login_status():
             st.session_state['login_status'] = True
             st.session_state['username'] = username
             st.session_state['saved_username'] = username
-    
+
     return st.session_state['login_status']
+
 
 # 设置登录状态
 def set_login_status(username, remember):
     st.session_state['login_status'] = True
     st.session_state['username'] = username
     st.session_state['saved_username'] = username if remember else ''
-    
+
     if remember:
         # 生成并保存token到cookie
         auth_token = generate_token(username)
@@ -112,6 +118,7 @@ def set_login_status(username, remember):
             del cookies['auth_token']
     cookies.save()
 
+
 # 获取保存的用户名
 def get_saved_credentials():
     auth_token = cookies.get('auth_token')
@@ -121,12 +128,14 @@ def get_saved_credentials():
             return username, ''
     return st.session_state.get('saved_username', ''), ''
 
+
 # 登录验证函数
 def authenticate(username, password, remember_password=False):
     if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == password:
         set_login_status(username, remember_password)
         return True
     return False
+
 
 # 获取数据函数
 def get_data(service_func, authors=None, project_names=None, updated_at_gte=None, updated_at_lte=None, columns=None):
@@ -141,6 +150,18 @@ def get_data(service_func, authors=None, project_names=None, updated_at_gte=None
             lambda ts: datetime.datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M:%S")
             if isinstance(ts, (int, float)) else ts
         )
+
+    def format_delta(row):
+        if (row['additions'] and not math.isnan(row['additions'])
+                and row['deletions'] and not math.isnan(row['deletions'])):
+            return f"+{int(row['additions'])}  -{int(row['deletions'])}"
+        else:
+            return ""
+
+    if "additions" in df.columns and "deletions" in df.columns:
+        df["delta"] = df.apply(format_delta, axis=1)
+    else:
+        df["delta"] = ""
 
     data = df[columns]
     return data
@@ -215,6 +236,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+
 # 登录界面
 def login_page():
     # 使用 st.columns 创建居中布局
@@ -223,7 +245,7 @@ def login_page():
         st.markdown('<div class="login-container">', unsafe_allow_html=True)
         st.markdown('<div class="platform-icon">🤖</div>', unsafe_allow_html=True)
         st.markdown('<h1 class="login-title">AI代码审查平台</h1>', unsafe_allow_html=True)
-        
+
         # 如果用户名和密码都为 'admin'，提示用户修改密码
         if DASHBOARD_USER == "admin" and DASHBOARD_PASSWORD == "admin":
             st.warning(
@@ -237,20 +259,21 @@ def login_page():
 
         # 获取保存的用户名和密码
         saved_username, saved_password = get_saved_credentials()
-        
+
         # 创建一个form，支持回车提交
         with st.form("login_form", clear_on_submit=False):
             username = st.text_input("👤 用户名", value=saved_username)
             password = st.text_input("🔑 密码", type="password", value=saved_password)
             remember_password = st.checkbox("记住密码", value=bool(saved_username))
             submit = st.form_submit_button("登 录")
-            
+
             if submit:
                 if authenticate(username, password, remember_password):
                     st.rerun()  # 重新运行应用以显示主要内容
                 else:
                     st.error("用户名或密码错误")
         st.markdown('</div>', unsafe_allow_html=True)
+
 
 # 生成项目提交数量图表
 def generate_project_count_chart(df):
@@ -303,6 +326,7 @@ def generate_project_score_chart(df):
     plt.tight_layout()
     st.pyplot(fig2)
 
+
 # 生成人员提交数量图表
 def generate_author_count_chart(df):
     if df.empty:
@@ -326,6 +350,8 @@ def generate_author_count_chart(df):
     plt.xticks(rotation=45, ha='right', fontsize=26)
     plt.tight_layout()
     st.pyplot(fig1)
+    plt.close(fig1)
+
 
 # 生成人员平均分数图表
 def generate_author_score_chart(df):
@@ -351,19 +377,52 @@ def generate_author_score_chart(df):
     plt.tight_layout()
     st.pyplot(fig2)
 
+
+def generate_author_code_line_chart(df):
+    if df.empty:
+        st.info("没有数据可供展示")
+        return
+        # 检查必要的列是否存在
+
+    if 'additions' not in df.columns or 'deletions' not in df.columns:
+        st.warning("无法生成代码行数图表：缺少必要的数据列")
+        return
+        # 计算每个人员的代码行数
+    author_code_lines_add = df.groupby('author')['additions'].sum().reset_index()
+    author_code_lines_add.columns = ['author', 'additions']
+    author_code_lines_del = df.groupby('author')['deletions'].sum().reset_index()
+    author_code_lines_del.columns = ['author', 'deletions']
+    # 显示代码行数柱状图
+    fig3, ax3 = plt.subplots(figsize=(10, 6))
+    ax3.bar(
+        author_code_lines_add['author'],
+        author_code_lines_add['additions'],
+        color=(0.7, 1, 0.7)
+    )
+    ax3.bar(
+        author_code_lines_del['author'],
+        -author_code_lines_del['deletions'],
+        color=(1, 0.7, 0.7)
+    )
+    plt.xticks(rotation=45, ha='right', fontsize=26)
+    plt.tight_layout()
+    st.pyplot(fig3)
+
+
 # 退出登录函数
 def logout():
     # 清除session状态
     st.session_state['login_status'] = False
     st.session_state.pop('username', None)
     st.session_state.pop('saved_username', None)
-    
+
     # 清除cookie
     if 'auth_token' in cookies:
         del cookies['auth_token']
     cookies.save()
-    
+
     st.rerun()
+
 
 # 主要内容
 def main_page():
@@ -426,21 +485,35 @@ def main_page():
             # 创建2x2网格布局展示四个图表
             row1, row2, row3, row4 = st.columns(4)
             with row1:
-                st.markdown("<div style='text-align: center; font-size: 20px;'><b>项目提交统计</b></div>", unsafe_allow_html=True)
+                st.markdown("<div style='text-align: center; font-size: 20px;'><b>项目提交统计</b></div>",
+                            unsafe_allow_html=True)
                 generate_project_count_chart(df)
             with row2:
-                st.markdown("<div style='text-align: center; font-size: 20px;'><b>项目平均得分</b></div>", unsafe_allow_html=True)
+                st.markdown("<div style='text-align: center; font-size: 20px;'><b>项目平均得分</b></div>",
+                            unsafe_allow_html=True)
                 generate_project_score_chart(df)
             with row3:
-                st.markdown("<div style='text-align: center; font-size: 20px;'><b>开发者提交统计</b></div>", unsafe_allow_html=True)
+                st.markdown("<div style='text-align: center; font-size: 20px;'><b>开发者提交统计</b></div>",
+                            unsafe_allow_html=True)
                 generate_author_count_chart(df)
             with row4:
-                st.markdown("<div style='text-align: center; font-size: 20px;'><b>开发者平均得分</b></div>", unsafe_allow_html=True)
+                st.markdown("<div style='text-align: center; font-size: 20px;'><b>开发者平均得分</b></div>",
+                            unsafe_allow_html=True)
                 generate_author_score_chart(df)
 
+            row5, row6, row7, row8 = st.columns(4)
+            with row5:
+                st.markdown("<div style='text-align: center;'><b>人员代码变更行数</b></div>", unsafe_allow_html=True)
+                # 只有当 additions 和 deletions 列都存在时才显示代码行数图表
+                if 'additions' in df.columns and 'deletions' in df.columns:
+                    generate_author_code_line_chart(df)
+                else:
+                    st.info("无法显示代码行数图表：缺少必要的数据列")
+
     # Merge Request 数据展示
-    mr_columns = ["project_name", "author", "source_branch", "target_branch", "updated_at", "commit_messages", "score",
-                  "url"]
+    mr_columns = ["project_name", "author", "source_branch", "target_branch", "updated_at", "commit_messages", "delta",
+                  "score",
+                  "url", 'additions', 'deletions']
 
     mr_column_config = {
         "project_name": "项目名称",
@@ -460,13 +533,16 @@ def main_page():
             max_chars=100,
             display_text="查看详情"
         ),
+        "additions": None,
+        "deletions": None,
     }
 
     display_data(mr_tab, ReviewService().get_mr_review_logs, mr_columns, mr_column_config)
 
     # Push 数据展示
     if show_push_tab:
-        push_columns = ["project_name", "author", "branch", "updated_at", "commit_messages", "score"]
+        push_columns = ["project_name", "author", "branch", "updated_at", "commit_messages", "delta", "score",
+                        'additions', 'deletions']
 
         push_column_config = {
             "project_name": "项目名称",
@@ -480,6 +556,8 @@ def main_page():
                 min_value=0,
                 max_value=100,
             ),
+            "additions": None,
+            "deletions": None,
         }
 
         display_data(push_tab, ReviewService().get_push_review_logs, push_columns, push_column_config)
