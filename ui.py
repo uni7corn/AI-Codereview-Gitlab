@@ -152,8 +152,7 @@ def get_data(service_func, authors=None, project_names=None, updated_at_gte=None
         )
 
     def format_delta(row):
-        if (row['additions'] and not math.isnan(row['additions'])
-                and row['deletions'] and not math.isnan(row['deletions'])):
+        if not math.isnan(row['additions']) and not math.isnan(row['deletions']):
             return f"+{int(row['additions'])}  -{int(row['deletions'])}"
         else:
             return ""
