@@ -6,6 +6,7 @@ from biz.entity.review_entity import MergeRequestReviewEntity, PushReviewEntity
 from biz.event.event_manager import event_manager
 from biz.gitlab.webhook_handler import filter_changes, MergeRequestHandler, PushHandler
 from biz.github.webhook_handler import filter_changes as filter_github_changes, PullRequestHandler as GithubPullRequestHandler, PushHandler as GithubPushHandler
+from biz.service.review_service import ReviewService
 from biz.utils.code_reviewer import CodeReviewer
 from biz.utils.im import notifier
 from biz.utils.log import logger
@@ -98,6 +99,17 @@ def handle_merge_request_event(webhook_data: dict, gitlab_token: str, gitlab_url
             logger.info(f"Merge Request Hook event, action={handler.action}, ignored.")
             return
 
+        # 检查last_commit_id是否已经存在，如果存在则跳过处理
+        last_commit_id = object_attributes.get('last_commit', {}).get('id', '')
+        if last_commit_id:
+            project_name = webhook_data['project']['name']
+            source_branch = object_attributes.get('source_branch', '')
+            target_branch = object_attributes.get('target_branch', '')
+            
+            if ReviewService.check_mr_last_commit_id_exists(project_name, source_branch, target_branch, last_commit_id):
+                logger.info(f"Merge Request with last_commit_id {last_commit_id} already exists, skipping review for {project_name}.")
+                return
+
         # 仅仅在MR创建或更新时进行Code Review
         # 获取Merge Request的changes
         changes = handler.get_merge_request_changes()
@@ -142,6 +154,7 @@ def handle_merge_request_event(webhook_data: dict, gitlab_token: str, gitlab_url
                 webhook_data=webhook_data,
                 additions=additions,
                 deletions=deletions,
+                last_commit_id=last_commit_id,
             )
         )
 
@@ -226,6 +239,17 @@ def handle_github_pull_request_event(webhook_data: dict, github_token: str, gith
             logger.info(f"Pull Request Hook event, action={handler.action}, ignored.")
             return
 
+        # 检查GitHub Pull Request的last_commit_id是否已经存在，如果存在则跳过处理
+        github_last_commit_id = webhook_data['pull_request']['head']['sha']
+        if github_last_commit_id:
+            project_name = webhook_data['repository']['name']
+            source_branch = webhook_data['pull_request']['head']['ref']
+            target_branch = webhook_data['pull_request']['base']['ref']
+            
+            if ReviewService.check_mr_last_commit_id_exists(project_name, source_branch, target_branch, github_last_commit_id):
+                logger.info(f"Pull Request with last_commit_id {github_last_commit_id} already exists, skipping review for {project_name}.")
+                return
+
         # 仅仅在PR创建或更新时进行Code Review
         # 获取Pull Request的changes
         changes = handler.get_pull_request_changes()
@@ -270,6 +294,7 @@ def handle_github_pull_request_event(webhook_data: dict, github_token: str, gith
                 webhook_data=webhook_data,
                 additions=additions,
                 deletions=deletions,
+                last_commit_id=github_last_commit_id,
             ))
 
     except Exception as e:
