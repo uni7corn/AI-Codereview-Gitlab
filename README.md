@@ -164,7 +164,7 @@ streamlit run ui.py --server.port=5002 --server.address=0.0.0.0
 
 ### 方案三：使用SaaS版
 
-无需安装，注册账号即可使用。访问站点：[AI Code Review SaaS](https://cr.mzfuture.com) 获取详情。
+无需安装，注册账号即可使用。访问站点[AI Code Review SaaS](https://cr.mzfuture.com) 获取详情。
 
 ## 其它
 
