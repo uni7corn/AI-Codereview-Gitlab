@@ -164,7 +164,11 @@ streamlit run ui.py --server.port=5002 --server.address=0.0.0.0
 
 ### 方案三：使用SaaS版
 
-无需安装，注册账号即可使用。访问站点[AI Code Review SaaS](https://cr.mzfuture.com) 获取详情。
+- 无需安装，注册账号即可使用。
+
+- 支持Gitlab、Gitee和Github三个平台的项目。
+
+- 访问站点 [https://cr.mzfuture.com](https://cr.mzfuture.com) 使用。
 
 ## 其它
 
