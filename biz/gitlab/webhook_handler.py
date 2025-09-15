@@ -85,7 +85,7 @@ class MergeRequestHandler:
         for attempt in range(max_retries):
             # 调用 GitLab API 获取 Merge Request 的 changes
             url = urljoin(f"{self.gitlab_url}/",
-                          f"api/v4/projects/{self.project_id}/merge_requests/{self.merge_request_iid}/changes")
+                          f"api/v4/projects/{self.project_id}/merge_requests/{self.merge_request_iid}/changes?access_raw_diffs=true")
             headers = {
                 'Private-Token': self.gitlab_token
             }
