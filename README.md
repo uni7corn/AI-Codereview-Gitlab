@@ -1,4 +1,4 @@
-![Push图片](./doc/img/ai-codereview-cartoon.png)
+![Push图片](doc/img/open/ai-codereview-cartoon.png)
 
 ## 项目简介
 
@@ -22,11 +22,11 @@
 
 **效果图:**
 
-![MR图片](./doc/img/mr.png)
+![MR图片](doc/img/open/mr.png)
 
-![Note图片](./doc/img/note.jpg)
+![Note图片](doc/img/open/note.jpg)
 
-![Dashboard图片](./doc/img/dashboard.jpg)
+![Dashboard图片](doc/img/open/dashboard.jpg)
 
 ## 原理
 
@@ -34,7 +34,7 @@
 事件，调用本系统的接口。系统随后通过第三方大模型对代码进行审查，并将审查结果直接反馈到对应的 Merge Request 或 Commit 的
 Note 中，便于团队查看和处理。
 
-![流程图](./doc/img/process.png)
+![流程图](doc/img/open/process.png)
 
 ## 部署
 
@@ -164,11 +164,12 @@ streamlit run ui.py --server.port=5002 --server.address=0.0.0.0
 
 ### 方案三：使用SaaS版
 
-- 无需安装，注册账号即可使用。
-
-- 支持Gitlab、Gitee和Github三个平台的项目。
-
-- 访问站点 [https://cr.mzfuture.com](https://cr.mzfuture.com) 使用。
+- 无需安装，注册账号即可使用
+- 生成项目总结报告；AI 自动生成7天、14天、1个月、2个月、3个月的项目总结报告
+- 精细化管理：按项目配置IM通知群、Review Style、扩展名白名单等
+- 支持Gitlab、Gitee和Github三个平台的项目
+- 更丰富的可视化 Dashboard
+- 详情见：[SaaS版](doc/saas.md) 
 
 ## 其它
 
