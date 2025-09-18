@@ -194,8 +194,8 @@ python -m biz.cmd.review
 也欢迎加微信/微信群，一起交流学习。
 
 <p float="left">
-  <img src="doc/img/wechat.jpg" width="400" />
-  <img src="doc/img/wechat_group.jpg" width="400" /> 
+  <img src="doc/img/open/wechat.jpg" width="400" />
+  <img src="doc/img/open/wechat_group.jpg" width="400" /> 
 </p>
 
 ## Star History
