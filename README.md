@@ -169,7 +169,7 @@ streamlit run ui.py --server.port=5002 --server.address=0.0.0.0
 - 精细化管理：按项目配置IM通知群、Review Style、扩展名白名单等
 - 支持Gitlab、Gitee和Github三个平台的项目
 - 更丰富的可视化 Dashboard
-- 详情见：[SaaS版](doc/saas.md) 
+- 详情见 [SaaS版介绍](doc/saas.md)  或直接访问SaaS站点 [https://cr.mzfuture.com](https://cr.mzfuture.com)
 
 ## 其它
 
