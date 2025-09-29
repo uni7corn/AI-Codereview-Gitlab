@@ -162,15 +162,6 @@ streamlit run ui.py --server.port=5002 --server.address=0.0.0.0
 
 企业微信和飞书推送配置类似，具体参见 [常见问题](doc/faq.md)
 
-### 方案三：使用SaaS版
-
-- 无需安装，注册账号即可使用
-- 生成项目总结报告；AI 自动生成7天、14天、1个月、2个月、3个月的项目总结报告
-- 精细化管理：按项目配置IM通知群、Review Style、扩展名白名单等
-- 支持Gitlab、Gitee和Github三个平台的项目
-- 更丰富的可视化 Dashboard
-- 详情见 [SaaS版介绍](doc/saas.md)  或直接访问SaaS站点 [https://cr.mzfuture.com](https://cr.mzfuture.com)
-
 ## 其它
 
 **1.如何对整个代码库进行Review?**
