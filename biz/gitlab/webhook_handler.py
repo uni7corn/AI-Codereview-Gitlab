@@ -185,7 +185,9 @@ class PushHandler:
 
     def parse_push_event(self):
         # 提取 Push 事件的相关参数
-        self.project_id = self.webhook_data.get('project', {}).get('id')
+        self.project_id = self.webhook_data.get('project_id', None)
+        if self.project_id is None:
+            self.project_id = self.webhook_data.get('project', {}).get('id')
         self.branch_name = self.webhook_data.get('ref', '').replace('refs/heads/', '')
         self.commit_list = self.webhook_data.get('commits', [])
 
