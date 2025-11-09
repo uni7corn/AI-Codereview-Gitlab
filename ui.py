@@ -26,15 +26,20 @@ from streamlit_cookies_manager import CookieManager
 
 load_dotenv("conf/.env")
 
-# 设置思源黑体为全局默认字体
-def set_global_font():
-    font_path = "fonts/SourceHanSansCN-Regular.otf"
-    if not Path(font_path).exists():
-        raise FileNotFoundError(f"字体文件不存在: {font_path}")
 
-    # 注册字体到 matplotlib
-    fm.fontManager.addfont(font_path)
-    mpl.rcParams["font.family"] = "Source Han Sans CN"  # 字体家族名
+def set_global_font():
+    """设置全局字体，如果字体文件不存在则忽略并使用默认字体"""
+    font_path = "fonts/SourceHanSansCN-Regular.otf"
+    if Path(font_path).exists():
+        try:
+            fm.fontManager.addfont(font_path)
+            mpl.rcParams["font.family"] = "Source Han Sans CN"
+            st.write("已加载字体：Source Han Sans CN")
+        except Exception as e:
+            st.warning(f"字体加载失败，使用默认字体。错误信息：{e}")
+    else:
+        st.warning(f"字体文件未找到：{font_path}，将使用默认字体。")
+
     mpl.rcParams["axes.unicode_minus"] = False  # 解决负号显示问题
 
 
