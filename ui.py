@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import math
+from pathlib import Path
 
 import streamlit as st
 
@@ -8,7 +9,6 @@ st.set_page_config(layout="wide", page_title="AI代码审查平台", page_icon="
 
 import datetime
 import os
-import json
 import hashlib
 import hmac
 import base64
@@ -16,11 +16,30 @@ import time
 import pandas as pd
 from dotenv import load_dotenv
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+import matplotlib.font_manager as fm
+import streamlit as st
+
 from biz.service.review_service import ReviewService
 from matplotlib.ticker import MaxNLocator
 from streamlit_cookies_manager import CookieManager
 
 load_dotenv("conf/.env")
+
+# 设置思源黑体为全局默认字体
+def set_global_font():
+    font_path = "fonts/SourceHanSansCN-Regular.otf"
+    if not Path(font_path).exists():
+        raise FileNotFoundError(f"字体文件不存在: {font_path}")
+
+    # 注册字体到 matplotlib
+    fm.fontManager.addfont(font_path)
+    mpl.rcParams["font.family"] = "Source Han Sans CN"  # 字体家族名
+    mpl.rcParams["axes.unicode_minus"] = False  # 解决负号显示问题
+
+
+# 在项目启动时调用
+set_global_font()
 
 # 从环境变量中读取用户名和密码
 DASHBOARD_USER = os.getenv("DASHBOARD_USER", "admin")
