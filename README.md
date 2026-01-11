@@ -174,6 +174,10 @@ streamlit run ui.py --server.port=5002 --server.address=0.0.0.0
 
 企业微信和飞书推送配置类似，具体参见 [常见问题](doc/faq.md)
 
+### Pro版
+
+见 [Pro版文档](doc/pro.md)
+
 ## 其它
 
 **1.如何对整个代码库进行Review?**
