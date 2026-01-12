@@ -34,7 +34,7 @@ services:
       retries: 5
 
   app:
-    image: registry.cn-hangzhou.aliyuncs.com/stanley-public/ai-codereview-pro:1.0.1
+    image: registry.cn-hangzhou.aliyuncs.com/stanley-public/ai-codereview-pro:1.0.3
     container_name: codereview-app
     ports:
       - "81:80"
