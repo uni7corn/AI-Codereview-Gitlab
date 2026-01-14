@@ -77,5 +77,31 @@ services:
 docker-compose up -d
 ```
 
-### 3. 访问服务
+### 3. 访问管理后台
 打开浏览器，访问 http://localhost:81 ，使用用户名 `admin` 和密码 `admin` 登录。
+
+### 4. 系统配置
+
+按照实际情况，在系统内增加项目、大模型、通知机器人等信息。
+
+## 配置代码库 Webhook (以Gitlab为例)
+
+### 1. 创建Access Token
+
+方法一：在 GitLab 个人设置中，创建一个 Personal Access Token。
+
+方法二：在 GitLab 项目设置中，创建Project Access Token
+
+### 2. 配置 Webhook
+
+在 GitLab 项目设置中，配置 Webhook：
+
+- URL：http://your-server-ip:81/review/webhook
+- Trigger Events：勾选 Push Events 和 Merge Request Events (不要勾选其它Event)
+- Secret Token：上面配置的 Access Token(可选)
+
+### 3. 测试 Webhook
+
+在Gitlab Webhook配置页面, 选择"Test" -> "Push Events"
+
+### 到管理后台查看结果
