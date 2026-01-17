@@ -4,6 +4,10 @@
 
 ![Dashboard](img/pro/dashboard.png)
 
+## 体验站
+
+地址: [https://demo.mzfuture.com](https://demo.mzfuture.com)
+
 ## 功能说明
 
 - 更丰富、友好可视化看板

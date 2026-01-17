@@ -192,7 +192,11 @@ python -m biz.cmd.review
 
 ### Code Review Pro 版
 
-详情见 [Code Review Pro 版](doc/pro.md)
+功能更丰富的 AI Code Review 版本
+
+体验站: [https://demo.mzfuture.com](https://demo.mzfuture.com)
+
+安装说明 [Code Review Pro 版](doc/pro.md)
 
 ![Dashboard](doc/img/pro/dashboard.png)
 
