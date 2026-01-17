@@ -174,7 +174,7 @@ streamlit run ui.py --server.port=5002 --server.address=0.0.0.0
 
 企业微信和飞书推送配置类似，具体参见 [常见问题](doc/faq.md)
 
-## 其它
+## 常见问题
 
 **1.如何对整个代码库进行Review?**
 
@@ -186,9 +186,19 @@ python -m biz.cmd.review
 
 运行后，请按照命令行中的提示进行操作即可。
 
-**2.其它问题**
+**2.其它常见问题**
 
 参见 [常见问题](doc/faq.md)
+
+### Code Review Pro 版
+
+功能更丰富的 AI Code Review 版本
+
+体验站: [https://demo.mzfuture.com](https://demo.mzfuture.com)
+
+安装说明 [Code Review Pro 版](doc/pro.md)
+
+![Dashboard](doc/img/pro/dashboard.png)
 
 ## 交流
 
