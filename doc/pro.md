@@ -39,18 +39,9 @@ services:
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_general_ci
-      - --default-authentication-plugin=mysql_native_password
-      - --max_connections=50
-    ports:
-      - "13306:3306"
     volumes:
       - ./data/mysql:/var/lib/mysql
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pu9QdPyXM"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   app:
     image: registry.cn-hangzhou.aliyuncs.com/stanley-public/ai-codereview-pro:1.1.5
@@ -60,8 +51,6 @@ services:
     environment:
       APP_USERNAME: admin
       APP_PASSWORD: admin
-      JWT_SECRET: ChangeThisSecretKeyInProduction
-      JAVA_OPTS: -Xms256m -Xmx512m
       DB_HOST: mysql
       DB_PORT: 3306
       DB_NAME: codereview
@@ -71,8 +60,7 @@ services:
       - ./data:/app/data
       - ./logs:/app/logs
     depends_on:
-      mysql:
-        condition: service_healthy
+      - mysql
     restart: unless-stopped
 ```
 
