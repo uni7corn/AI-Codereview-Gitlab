@@ -199,6 +199,7 @@ python -m biz.cmd.review
 安装说明 [Code Review Pro 版](doc/pro.md)
 
 ![Dashboard](doc/img/pro/dashboard.png)
+![Member Analysis](doc/img/pro/member-analysis.png)
 
 ## 交流
 
