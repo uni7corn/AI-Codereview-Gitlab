@@ -148,18 +148,6 @@ streamlit run ui.py --server.port=5002 --server.address=0.0.0.0
   - 请确保 GitLab 能够访问本系统。
   - 若内网环境受限，建议将系统部署在外网服务器上。
 
-### 配置 Gitea Webhook
-
-#### 1. 创建 Access Token
-- 在 Gitea 个人设置中创建 Access Token，并确保具备 `repo` 权限。
-
-#### 2. 配置 Webhook
-- 打开仓库 `Settings -> Webhooks -> Add Webhook`
-- URL：`http://your-server-ip:5001/review/webhook`
-- Header：`X-Gitea-Token` 设置为 `.env` 中的 `GITEA_ACCESS_TOKEN`（可选）
-- 触发事件：勾选 `Push events` 与 `Pull Request events`
-- Content Type：`application/json`
-
 ### 配置消息推送
 
 #### 1.配置钉钉推送
