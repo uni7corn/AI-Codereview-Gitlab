@@ -72,7 +72,7 @@ services:
     container_name: codereview-mysql
     privileged: true
     environment:
-      MYSQL_ROOT_PASSWORD: Xiongzhun@root
+      MYSQL_ROOT_PASSWORD: u9QdPyXM
       MYSQL_DATABASE: codereview
       TZ: Asia/Shanghai
     command:
