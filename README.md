@@ -178,7 +178,7 @@ python -m biz.cmd.review
 
 参见 [常见问题](doc/faq.md)
 
-### 🏆 Code Review Pro 版
+## 🏆 Code Review Pro 版
 
 功能更丰富的 AI Code Review 版本
 
