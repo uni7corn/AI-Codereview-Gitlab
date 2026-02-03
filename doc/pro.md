@@ -52,10 +52,6 @@
 ## 部署
 
 ### 1. 准备环境
-- 创建目录
-```aiignore
-mkdir -p {data,logs}
-```
 
 - 一般场景（推荐）：创建docker-compose.yml文件
 
