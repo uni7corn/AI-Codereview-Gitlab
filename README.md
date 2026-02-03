@@ -186,8 +186,17 @@ python -m biz.cmd.review
 
 项目介绍与使用说明 [Code Review Pro 版](doc/pro.md)
 
-![Dashboard](doc/img/pro/dashboard.png)
-![Member Analysis](doc/img/pro/member-analysis.png)
+**多种统计图**
+![多种统计图](doc/img/pro/dashboard.png)
+
+**成员提交分析** 
+![成员提交分析](doc/img/pro/member-analysis.png)
+
+**Deep Review** 
+![Deep Review](doc/img/pro/deepreview.png)
+
+**项目哨兵** 
+![项目哨兵](doc/img/pro/project-analysis-plan.png)
 
 ## 交流
 
