@@ -1,48 +1,43 @@
 # AI Codereview Pro版
 
-功能更加丰富强大的Code Review、项目管理工具
+AI Codereview Pro是基于大语言模型的自动化代码审查工具，旨在帮助开发团队提升代码质量、规范编码实践、减少人工审查负担。通过深度集成Git平台，提供从基础审查到项目级洞察的全面解决方案。
 
-## 功能说明
+### 开源版 VS Pro版
 
-### 🎯更丰富、友好可视化看板
+开源版与 Pro 版均为基于大语言模型的 GitLab 自动代码审查工具，两者核心能力对比如下。
 
-**多维数据看板：** 提供丰富、直观的可视化界面，打造团队专属的效能洞察中心
+| 分类      | 功能特性      | 开源版                                             | Pro版                                                  |
+|---------|-----------|-------------------------------------------------|-------------------------------------------------------|
+| 产品定位    | 适用场景      | 提供基础的代码审查功能，适合二次开发与定制场景                         | 提供更强大的审查能力，支持项目分析与深度管理场景                              |
+|         | 技术栈       | Python + SQLite                                 | Vue + Java + MySQL                                    |
+| 审查触发与集成 | 触发事件类型    | Push 与 Merge Request                            | 与开源版一致                                                |
+|         | 支持的代码平台   | GitLab / GitHub / Gitea                         | GitLab / GitHub / Gitee / Gitea                       |
+|         | 触发方式      | Webhook 自动审查                                    | 与开源版一致                                                |
+| AI 能力   | 支持的模型     | DeepSeek、ZhipuAI、OpenAI、Anthropic、通义千问、Ollama 等 | DeepSeek、OpenAI、OpenRouter、ZhipuAI、Ollama、VLLM、阿里云百炼等 |
+|         | 审查深度      | ❌ 不支持                                           | ✅ 深度审查：支持全项目及提交历史的综合分析                                |
+| 审查输出内容  | 结果展示      | 在 MR/Commit 中生成评审建议注释                           | 支持 MR/Commit 注释 + 系统内统一查看界面                           |
+|         | 审查风格      | 预设风格：专业、讽刺、绅士、幽默                                | 支持按项目自定义提示词，灵活适配项目风格                                  |
+|         | 报告总结      | 基础摘要                                            | 增强型报告与可视化图表展示                                         |
+| 消息通知    | 推送渠道      | 钉钉/企业微信/飞书                                      | 与开源版一致                                                |
+| 数据与报表   | Dashboard | 单页面 Dashboard                                   | 更多统计图（类别更丰富）                                          |
+|         | 成员分析      |❌ 不支持                                             | ✅ 支持开发者提交行为分析                                         |
+| 项目监控    | 报告生成      | 自动生成日报                                          | 支持自定义日报/周报/月报...                                      |
+|         | 主动监控      |❌ 不支持                                             | 项目哨兵：支持自定义监控逻辑与预警频率                                   |
+| 部署与体验   | 部署方式      | Python 运行 / Docker 部署                           | Docker 部署                                             |
+|         | 体验方式      |❌ 无                                               | 提供线上体验站：https://demo.mzfuture.com                     |
 
-### ⚙️ 智能评审引擎
-
-**灵活触发机制：** 支持按项目自定义代码评审触发规则（Merge Request 或 Push 事件），适配多样化研发流程。
-
-**大模型集成中心：** 提供统一的可视化界面，便捷集成与管理多款主流大语言模型（LLM），打造企业专属AI能力矩阵
-
-### 🤖 智能通知体系
-
-**全渠道机器人中心：** 一站式管理钉钉、飞书、企业微信等平台通知机器人，支持各项目独立绑定与消息模板定制
-
-**精准信息触达：** 实现关键信息的智能化分发与精准推送，提升团队协同效率
-
-### 🎨 开发者体验优化
-
-**双主题视觉系统：** 提供完整的浅色（Light）与深色（Dark）主题模式，满足不同场景下的视觉偏好
-
-### 📊 深度分析与洞察
-
-**成员效能分析：** 多维对比团队成员提交行为与贡献度，量化评估研发效能
-
-**Deep Review智能分析：** 通过自然语言与项目深度交互，获取代码库整体架构与质量洞察
-
-**项目哨兵系统：** 定时自动化分析项目健康状态，生成结构化报告并推送至指定渠道，实现项目状态的可视化追踪与预警
-
+### Pro版 部分截图
 
 **多种统计图**
 ![Dashboard](img/pro/dashboard.png)
 
-**成员提交分析** 
+**成员提交分析**
 ![Dashboard](img/pro/member-analysis.png)
 
-**Deep Review** 
+**Deep Review**
 ![Dashboard](img/pro/deepreview.png)
 
-**项目哨兵** 
+**项目哨兵**
 ![Dashboard](img/pro/project-analysis-plan.png)
 
 ## 体验站
@@ -53,7 +48,7 @@
 
 ### 1. 准备环境
 
-- 一般场景（推荐）：创建docker-compose.yml文件
+创建docker-compose.yml文件
 
 ```yaml
 services:
@@ -72,7 +67,7 @@ services:
     volumes:
       - ./data/mysql:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pu9QdPyXM"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-pu9QdPyXM" ]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -80,7 +75,7 @@ services:
     restart: unless-stopped
 
   app:
-    image: registry.cn-hangzhou.aliyuncs.com/stanley-public/ai-codereview-pro:1.3.1
+    image: registry.cn-hangzhou.aliyuncs.com/stanley-public/ai-codereview-pro:1.3.2
     container_name: codereview-app
     ports:
       - "81:80"
@@ -101,104 +96,17 @@ services:
         condition: service_healthy
     restart: unless-stopped
 ```
-- 特殊场景 创建docker-compose.yml文件（适用存在2级路由，例如你的gitlab主站域名为x.x.com/gitlab）：
-- 原理：通过nginx劫持ai-codereview-pro应用的访问，强行加入/gitlab
-```
-services:
-  mysql:
-    image: mysql:8.0
-    container_name: codereview-mysql
-    privileged: true
-    environment:
-      MYSQL_ROOT_PASSWORD: u9QdPyXM
-      MYSQL_DATABASE: codereview
-      TZ: Asia/Shanghai
-    command:
-      - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_general_ci
-    volumes:
-      - ./data/mysql:/var/lib/mysql
-    restart: unless-stopped
-    networks:
-      - internal
-  app:
-    image: registry.cn-hangzhou.aliyuncs.com/stanley-public/ai-codereview-pro:1.3.1
-    container_name: codereview-app
-    privileged: true
-    ports:
-      - "81:80"
-    environment:
-      APP_USERNAME: admin
-      APP_PASSWORD: admin
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_NAME: codereview
-      DB_USERNAME: root
-      DB_PASSWORD: u9QdPyXM
-    volumes:
-      - ./data:/app/data
-      - ./logs:/app/logs
-    depends_on:
-      - mysql
-    restart: unless-stopped
-    networks:
-      - internal
-  proxy:
-    image: nginx:1.29.3-alpine3.22-slim
-    container_name: codereview-proxy
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./certs:/etc/nginx/certs:ro
-    ports:
-      - "443:443"
-    restart: unless-stopped
-    networks:
-      internal:
-        aliases:
-          - x.x.com
-networks:
-  internal:
-    driver: bridge
 
-```
-特殊场景 中的nginx.conf
-
-```
-events {}
-http {
-    upstream real_gitlab {
-        # 把 <REAL_IP> 换成 x.x.com 的真实地址
-        server 192.168.1.2:443;
-    }
-
-    server {
-        listen 443 ssl;
-        server_name x.x.com;
-
-        ssl_certificate     /etc/nginx/certs/server.crt;
-        ssl_certificate_key /etc/nginx/certs/server.key;
-
-        location / {
-            # 统一加 /gitlab 前缀
-            rewrite ^(.*)$ /gitlab$1 break;
-
-            proxy_pass https://real_gitlab;
-            proxy_ssl_verify        off;   # 自签/内网必需
-            proxy_ssl_server_name   on;
-            proxy_set_header Host   x.x.com;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_connect_timeout   10s;
-        }
-    }
-}
-```
+如果存在2级路由,见解决方案 [二级路由场景部署方案](pro-proxy.md)
 
 ### 2. 启动服务
+
 ```bash
 docker-compose up -d
 ```
 
 ### 3. 访问管理后台
+
 打开浏览器，访问 http://localhost:81 ，使用用户名 `admin` 和密码 `admin` 登录。
 
 ### 4. 系统配置
