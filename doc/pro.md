@@ -14,7 +14,7 @@ AI Codereview Pro是基于大语言模型的自动化代码审查工具，旨在
 |         | 支持的代码平台   | GitLab / GitHub / Gitea                         | GitLab / GitHub / Gitee / Gitea                       |
 |         | 触发方式      | Webhook 自动审查                                    | 与开源版一致                                                |
 | AI 能力   | 支持的模型     | DeepSeek、ZhipuAI、OpenAI、Anthropic、通义千问、Ollama 等 | DeepSeek、OpenAI、OpenRouter、ZhipuAI、Ollama、VLLM、阿里云百炼等 |
-|         | 审查深度      | ❌ 不支持                                           | ✅ 深度审查：支持全项目及提交历史的综合分析                                |
+|         | 深度审查      | ❌ 不支持                                           | ✅ 深度审查：支持全项目及提交历史的综合分析                                |
 | 审查输出内容  | 结果展示      | 在 MR/Commit 中生成评审建议注释                           | 支持 MR/Commit 注释 + 系统内统一查看界面                           |
 |         | 审查风格      | 预设风格：专业、讽刺、绅士、幽默                                | 支持按项目自定义提示词，灵活适配项目风格                                  |
 |         | 报告总结      | 基础摘要                                            | 增强型报告与可视化图表展示                                         |
