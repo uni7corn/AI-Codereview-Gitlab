@@ -16,10 +16,15 @@ fi
 # 3. 创建目录
 BASE_DIR=/opt/codereview
 mkdir -p $BASE_DIR
-cd $BASE_DIR
 
 # 4. 启动
-docker compose -f https://raw.githubusercontent.com/sunmh207/AI-Codereview-Gitlab/refs/heads/main/scripts/pro/docker-compose.yml up -d
+COMPOSE_FILE="$BASE_DIR/docker-compose.yml"
+
+curl -fsSL \
+  https://raw.githubusercontent.com/sunmh207/AI-Codereview-Gitlab/refs/heads/main/scripts/pro/docker-compose.yml \
+  -o "$COMPOSE_FILE"
+
+docker compose -f "$COMPOSE_FILE" up -d
 
 echo "✅ 启动成功"
 echo "👉 访问地址: http://localhost:81"
