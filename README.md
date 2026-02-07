@@ -186,6 +186,11 @@ python -m biz.cmd.review
 
 项目介绍与使用说明 [Code Review Pro 版](doc/pro.md)
 
+快速启动命令
+```
+ curl -fsSL https://raw.githubusercontent.com/sunmh207/AI-Codereview-Gitlab/refs/heads/main/scripts/pro/install.sh | bash
+```
+
 **多种统计图**
 ![多种统计图](doc/img/pro/dashboard.png)
 
