@@ -11,8 +11,6 @@ services:
       --collation-server=utf8mb4_general_ci
       --explicit_defaults_for_timestamp=1
       --lower_case_table_names=1
-    volumes:
-      - ./data/mysql:/var/lib/mysql
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-pu9QdPyXM" ]
       interval: 5s
@@ -35,9 +33,6 @@ services:
       DB_USERNAME: root
       DB_PASSWORD: u9QdPyXM
       TZ: Asia/Shanghai
-    volumes:
-      - ./data:/app/data
-      - ./logs:/app/logs
     depends_on:
       mysql:
         condition: service_healthy
