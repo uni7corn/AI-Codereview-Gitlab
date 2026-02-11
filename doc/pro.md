@@ -13,6 +13,7 @@ AI Codereview Pro是基于大语言模型的自动化代码审查工具，旨在
 | 审查触发与集成 | 触发事件类型    | Push 与 Merge Request                            | 与开源版一致                                                |
 |         | 支持的代码平台   | GitLab / GitHub / Gitea                         | GitLab / GitHub / Gitee / Gitea                       |
 |         | 触发方式      | Webhook 自动审查                                    | 与开源版一致                                                |
+|         | IM通知@提交者  | ❌ 不支持                                    | ✅ 支持设置代码评审分数阈值，低于阈值时钉钉/企微/飞书消息自动 @ 提交者                                               |
 | AI 能力   | 支持的模型     | DeepSeek、ZhipuAI、OpenAI、Anthropic、通义千问、Ollama 等 | DeepSeek、OpenAI、OpenRouter、ZhipuAI、Ollama、VLLM、阿里云百炼等 |
 |         | 提示词自定义    | 全局统一提示词                                         | ✅ 支持按项目独立配置审查提示词                                      |
 |         | 深度审查      | ❌ 不支持                                           | ✅ 深度审查：支持全项目及提交历史的综合分析                                |
@@ -78,7 +79,7 @@ services:
     restart: unless-stopped
 
   app:
-    image: registry.cn-hangzhou.aliyuncs.com/stanley-public/ai-codereview-pro:1.3.3
+    image: registry.cn-hangzhou.aliyuncs.com/stanley-public/ai-codereview-pro:1.3.4
     container_name: codereview-app
     ports:
       - "81:80"

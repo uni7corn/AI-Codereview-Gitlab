@@ -22,7 +22,7 @@ services:
     networks:
       - internal
   app:
-    image: registry.cn-hangzhou.aliyuncs.com/stanley-public/ai-codereview-pro:1.3.3
+    image: registry.cn-hangzhou.aliyuncs.com/stanley-public/ai-codereview-pro:1.3.4
     container_name: codereview-app
     privileged: true
     ports:
