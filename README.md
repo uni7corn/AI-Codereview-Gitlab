@@ -1,5 +1,8 @@
 ![Push图片](doc/img/open/ai-codereview-cartoon.png)
 
+[开源版](README.md) | 
+[Pro版](doc/pro.md)
+
 ## 项目简介
 
 本项目是一个基于大模型的自动化代码审查工具，帮助开发团队在代码合并或提交时，快速进行智能化的审查(Code Review)，提升代码质量和开发效率。
@@ -148,18 +151,6 @@ streamlit run ui.py --server.port=5002 --server.address=0.0.0.0
   - 请确保 GitLab 能够访问本系统。
   - 若内网环境受限，建议将系统部署在外网服务器上。
 
-### 配置 Gitea Webhook
-
-#### 1. 创建 Access Token
-- 在 Gitea 个人设置中创建 Access Token，并确保具备 `repo` 权限。
-
-#### 2. 配置 Webhook
-- 打开仓库 `Settings -> Webhooks -> Add Webhook`
-- URL：`http://your-server-ip:5001/review/webhook`
-- Header：`X-Gitea-Token` 设置为 `.env` 中的 `GITEA_ACCESS_TOKEN`（可选）
-- 触发事件：勾选 `Push events` 与 `Pull Request events`
-- Content Type：`application/json`
-
 ### 配置消息推送
 
 #### 1.配置钉钉推送
@@ -174,7 +165,7 @@ streamlit run ui.py --server.port=5002 --server.address=0.0.0.0
 
 企业微信和飞书推送配置类似，具体参见 [常见问题](doc/faq.md)
 
-## 其它
+## 常见问题
 
 **1.如何对整个代码库进行Review?**
 
@@ -186,9 +177,34 @@ python -m biz.cmd.review
 
 运行后，请按照命令行中的提示进行操作即可。
 
-**2.其它问题**
+**2.其它常见问题**
 
 参见 [常见问题](doc/faq.md)
+
+## 🏆 Code Review Pro 版
+
+功能更丰富的 AI Code Review 版本
+
+体验站: [https://demo.mzfuture.com](https://demo.mzfuture.com)
+
+项目介绍与使用说明 [Code Review Pro 版](doc/pro.md)
+
+快速启动命令
+```
+ curl -fsSL https://raw.githubusercontent.com/sunmh207/AI-Codereview-Gitlab/refs/heads/main/scripts/pro/install.sh | bash
+```
+
+**多种统计图**
+![多种统计图](doc/img/pro/dashboard.png)
+
+**成员提交分析** 
+![成员提交分析](doc/img/pro/member-analysis.png)
+
+**Deep Review** 
+![Deep Review](doc/img/pro/deepreview.png)
+
+**项目哨兵** 
+![项目哨兵](doc/img/pro/project-analysis-plan.png)
 
 ## 交流
 
