@@ -189,13 +189,15 @@ def get_data(service_func, authors=None, project_names=None, updated_at_gte=None
     return data
 
 
-# 隐藏默认的Streamlit菜单和页眉
+# 隐藏默认的Streamlit菜单和页眉（display:none 避免 visibility:hidden 仍占位导致顶部留白）
 st.markdown("""
     <style>
         #MainMenu {visibility: hidden;}
-        header {visibility: hidden;}
+        header[data-testid="stHeader"] {display: none !important;}
         footer {visibility: hidden;}
-        div.block-container {padding-top: 0rem;}
+        div.block-container {padding-top: 0rem !important; padding-bottom: 0.5rem !important;}
+        .main .block-container {margin-top: 0 !important;}
+        section[data-testid="stMain"] > div {padding-top: 0rem !important;}
     </style>
     """, unsafe_allow_html=True)
 
@@ -253,6 +255,40 @@ st.markdown(
         margin-bottom: 0.5rem;
         text-align: center;
     }
+    /* Pro 版链接 - 与退出登录按钮同高同风格 */
+    a.pro-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 2rem;
+        background: linear-gradient(135deg, #5b6bc0 0%, #7c4dff 100%);
+        color: #fff !important;
+        text-decoration: none;
+        border-radius: 20px;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: none;
+        box-sizing: border-box;
+        min-height: 2.25rem;
+        line-height: 1.5;
+        white-space: nowrap;
+    }
+    a.pro-link:hover {
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        color: #fff !important;
+    }
+    .pro-link-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        margin-left: 0.5rem;
+        min-width: 0;
+        overflow: hidden;
+    }
+    .pro-link-wrap .pro-link {
+        max-width: 100%;
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -297,8 +333,13 @@ def login_page():
         st.markdown('</div>', unsafe_allow_html=True)
 
 
+# 单列展示用较小画布，便于一行多图
+_DEFAULT_CHART_FIGSIZE = (3.8, 3.2)
+_DEFAULT_XTICK_FONT = 8
+
+
 # 生成项目提交数量图表
-def generate_project_count_chart(df):
+def generate_project_count_chart(df, figsize=_DEFAULT_CHART_FIGSIZE, xtick_fs=_DEFAULT_XTICK_FONT):
     if df.empty:
         st.info("没有数据可供展示")
         return
@@ -311,20 +352,21 @@ def generate_project_count_chart(df):
     colors = plt.colormaps['tab20'].resampled(len(project_counts))
 
     # 显示提交数量柱状图
-    fig1, ax1 = plt.subplots(figsize=(10, 6))
+    fig1, ax1 = plt.subplots(figsize=figsize)
     ax1.bar(
         project_counts['project_name'],
         project_counts['count'],
         color=[colors(i) for i in range(len(project_counts))]
     )
     ax1.yaxis.set_major_locator(MaxNLocator(integer=True))
-    plt.xticks(rotation=45, ha='right', fontsize=26)
+    plt.xticks(rotation=45, ha='right', fontsize=xtick_fs)
     plt.tight_layout()
     st.pyplot(fig1)
+    plt.close(fig1)
 
 
 # 生成项目平均分数图表
-def generate_project_score_chart(df):
+def generate_project_score_chart(df, figsize=_DEFAULT_CHART_FIGSIZE, xtick_fs=_DEFAULT_XTICK_FONT):
     if df.empty:
         st.info("没有数据可供展示")
         return
@@ -337,20 +379,21 @@ def generate_project_score_chart(df):
     # colors = plt.cm.get_cmap('Accent', len(project_scores))  # 使用'tab20'颜色映射，适合分类数据
     colors = plt.colormaps['Accent'].resampled(len(project_scores))
     # 显示平均分数柱状图
-    fig2, ax2 = plt.subplots(figsize=(10, 6))
+    fig2, ax2 = plt.subplots(figsize=figsize)
     ax2.bar(
         project_scores['project_name'],
         project_scores['average_score'],
         color=[colors(i) for i in range(len(project_scores))]
     )
     ax2.yaxis.set_major_locator(MaxNLocator(integer=True))
-    plt.xticks(rotation=45, ha='right', fontsize=26)
+    plt.xticks(rotation=45, ha='right', fontsize=xtick_fs)
     plt.tight_layout()
     st.pyplot(fig2)
+    plt.close(fig2)
 
 
 # 生成人员提交数量图表
-def generate_author_count_chart(df):
+def generate_author_count_chart(df, figsize=_DEFAULT_CHART_FIGSIZE, xtick_fs=_DEFAULT_XTICK_FONT):
     if df.empty:
         st.info("没有数据可供展示")
         return
@@ -362,21 +405,21 @@ def generate_author_count_chart(df):
     # 生成颜色列表，每个项目一个颜色
     colors = plt.colormaps['Paired'].resampled(len(author_counts))
     # 显示提交数量柱状图
-    fig1, ax1 = plt.subplots(figsize=(10, 6))
+    fig1, ax1 = plt.subplots(figsize=figsize)
     ax1.bar(
         author_counts['author'],
         author_counts['count'],
         color=[colors(i) for i in range(len(author_counts))]
     )
     ax1.yaxis.set_major_locator(MaxNLocator(integer=True))
-    plt.xticks(rotation=45, ha='right', fontsize=26)
+    plt.xticks(rotation=45, ha='right', fontsize=xtick_fs)
     plt.tight_layout()
     st.pyplot(fig1)
     plt.close(fig1)
 
 
 # 生成人员平均分数图表
-def generate_author_score_chart(df):
+def generate_author_score_chart(df, figsize=_DEFAULT_CHART_FIGSIZE, xtick_fs=_DEFAULT_XTICK_FONT):
     if df.empty:
         st.info("没有数据可供展示")
         return
@@ -386,7 +429,7 @@ def generate_author_score_chart(df):
     author_scores.columns = ['author', 'average_score']
 
     # 显示平均分数柱状图
-    fig2, ax2 = plt.subplots(figsize=(10, 6))
+    fig2, ax2 = plt.subplots(figsize=figsize)
     # 生成颜色列表，每个项目一个颜色
     colors = plt.colormaps['Pastel1'].resampled(len(author_scores))
     ax2.bar(
@@ -395,27 +438,26 @@ def generate_author_score_chart(df):
         color=[colors(i) for i in range(len(author_scores))]
     )
     ax2.yaxis.set_major_locator(MaxNLocator(integer=True))
-    plt.xticks(rotation=45, ha='right', fontsize=26)
+    plt.xticks(rotation=45, ha='right', fontsize=xtick_fs)
     plt.tight_layout()
     st.pyplot(fig2)
+    plt.close(fig2)
 
 
-def generate_author_code_line_chart(df):
+def generate_author_code_line_chart(df, figsize=_DEFAULT_CHART_FIGSIZE, xtick_fs=_DEFAULT_XTICK_FONT):
     if df.empty:
         st.info("没有数据可供展示")
         return
-        # 检查必要的列是否存在
 
     if 'additions' not in df.columns or 'deletions' not in df.columns:
         st.warning("无法生成代码行数图表：缺少必要的数据列")
         return
-        # 计算每个人员的代码行数
+
     author_code_lines_add = df.groupby('author')['additions'].sum().reset_index()
     author_code_lines_add.columns = ['author', 'additions']
     author_code_lines_del = df.groupby('author')['deletions'].sum().reset_index()
     author_code_lines_del.columns = ['author', 'deletions']
-    # 显示代码行数柱状图
-    fig3, ax3 = plt.subplots(figsize=(10, 6))
+    fig3, ax3 = plt.subplots(figsize=figsize)
     ax3.bar(
         author_code_lines_add['author'],
         author_code_lines_add['additions'],
@@ -426,9 +468,44 @@ def generate_author_code_line_chart(df):
         -author_code_lines_del['deletions'],
         color=(1, 0.7, 0.7)
     )
-    plt.xticks(rotation=45, ha='right', fontsize=26)
+    ax3.axhline(y=0, color='gray', linestyle='-', linewidth=0.5)
+    plt.xticks(rotation=45, ha='right', fontsize=xtick_fs)
     plt.tight_layout()
     st.pyplot(fig3)
+    plt.close(fig3)
+
+
+def generate_project_code_line_chart(df, figsize=_DEFAULT_CHART_FIGSIZE, xtick_fs=_DEFAULT_XTICK_FONT):
+    """按项目汇总增删行数，展示形式与 generate_author_code_line_chart 一致（绿色柱为新增，红色柱为删减为负轴）"""
+    if df.empty:
+        st.info("没有数据可供展示")
+        return
+
+    if 'additions' not in df.columns or 'deletions' not in df.columns:
+        st.warning("无法生成项目代码行数图表：缺少必要的数据列")
+        return
+
+    proj_add = df.groupby('project_name')['additions'].sum().reset_index()
+    proj_add.columns = ['project_name', 'additions']
+    proj_del = df.groupby('project_name')['deletions'].sum().reset_index()
+    proj_del.columns = ['project_name', 'deletions']
+
+    fig, ax = plt.subplots(figsize=figsize)
+    ax.bar(
+        proj_add['project_name'],
+        proj_add['additions'],
+        color=(0.7, 1, 0.7),
+    )
+    ax.bar(
+        proj_del['project_name'],
+        -proj_del['deletions'],
+        color=(1, 0.7, 0.7),
+    )
+    ax.axhline(y=0, color='gray', linestyle='-', linewidth=0.5)
+    plt.xticks(rotation=45, ha='right', fontsize=xtick_fs)
+    plt.tight_layout()
+    st.pyplot(fig)
+    plt.close(fig)
 
 
 # 退出登录函数
@@ -446,15 +523,34 @@ def logout():
     st.rerun()
 
 
+# Pro 版文档链接（登录后展示）
+PRO_VERSION_URL = "https://github.com/sunmh207/AI-Codereview-Gitlab/blob/main/doc/pro.md"
+
+
 # 主要内容
 def main_page():
-    # 将标题和退出按钮放在同一行
-    col_title, col_space, col_logout = st.columns([7, 2, 1.2])
-    with col_title:
-        st.markdown("#### 📊 代码审查统计")
-    with col_logout:
-        if st.button("退出登录", key="logout_button", use_container_width=True):
-            logout()
+    # 顶部导航：一行内标题 + 退出 / Pro（减少垂直留白）
+    head_left, head_right = st.columns([7.2, 2.8])
+    with head_left:
+        st.markdown(
+            '<style>.dash-heading-bar{margin:0 0 0.15rem 0;padding:0;line-height:1.2;} '
+            '.dash-heading-bar h4{margin:0;font-size:1rem;font-weight:600;}</style>'
+            '<div class="dash-heading-bar"><h4>📊 代码审查统计</h4></div>',
+            unsafe_allow_html=True,
+        )
+    with head_right:
+        # 两列分别放退出登录、Pro 版，靠右对齐
+        sub_col_logout, sub_col_pro = st.columns([1.3, 1.5])
+        with sub_col_logout:
+            if st.button("退出登录", key="logout_button", use_container_width=True):
+                logout()
+        with sub_col_pro:
+            st.markdown(
+                '<div class="pro-link-wrap">'
+                '<a href="' + PRO_VERSION_URL + '" target="_blank" rel="noopener noreferrer" class="pro-link">开源版 VS Pro 版</a>'
+                '</div>',
+                unsafe_allow_html=True
+            )
 
     current_date = datetime.date.today()
     start_date_default = current_date - datetime.timedelta(days=7)
@@ -504,31 +600,31 @@ def main_page():
             average_score = df["score"].mean() if not df.empty else 0
             st.markdown(f"**总记录数:** {total_records}，**平均得分:** {average_score:.2f}")
 
-            # 创建2x2网格布局展示四个图表
-            row1, row2, row3, row4 = st.columns(4)
-            with row1:
-                st.markdown("<div style='text-align: center; font-size: 20px;'><b>项目提交统计</b></div>",
-                            unsafe_allow_html=True)
+            # 所有统计图同一行排列（画布与坐标轴字号收窄以适配宽幅多列）
+            chart_title_css = "<div style='text-align:center;font-size:clamp(11px,0.95vw,14px);line-height:1.2;margin:0 0 0.2rem 0;'><b>{}</b></div>"
+            c1, c2, c3, c4, c5, c6 = st.columns(6)
+            with c1:
+                st.markdown(chart_title_css.format("项目提交统计"), unsafe_allow_html=True)
                 generate_project_count_chart(df)
-            with row2:
-                st.markdown("<div style='text-align: center; font-size: 20px;'><b>项目平均得分</b></div>",
-                            unsafe_allow_html=True)
+            with c2:
+                st.markdown(chart_title_css.format("项目平均得分"), unsafe_allow_html=True)
                 generate_project_score_chart(df)
-            with row3:
-                st.markdown("<div style='text-align: center; font-size: 20px;'><b>开发者提交统计</b></div>",
-                            unsafe_allow_html=True)
+            with c3:
+                st.markdown(chart_title_css.format("开发者提交统计"), unsafe_allow_html=True)
                 generate_author_count_chart(df)
-            with row4:
-                st.markdown("<div style='text-align: center; font-size: 20px;'><b>开发者平均得分</b></div>",
-                            unsafe_allow_html=True)
+            with c4:
+                st.markdown(chart_title_css.format("开发者平均得分"), unsafe_allow_html=True)
                 generate_author_score_chart(df)
-
-            row5, row6, row7, row8 = st.columns(4)
-            with row5:
-                st.markdown("<div style='text-align: center;'><b>人员代码变更行数</b></div>", unsafe_allow_html=True)
-                # 只有当 additions 和 deletions 列都存在时才显示代码行数图表
+            with c5:
+                st.markdown(chart_title_css.format("人员代码变更行数"), unsafe_allow_html=True)
                 if 'additions' in df.columns and 'deletions' in df.columns:
                     generate_author_code_line_chart(df)
+                else:
+                    st.info("无法显示代码行数图表：缺少必要的数据列")
+            with c6:
+                st.markdown(chart_title_css.format("项目代码变更行数"), unsafe_allow_html=True)
+                if 'additions' in df.columns and 'deletions' in df.columns:
+                    generate_project_code_line_chart(df)
                 else:
                     st.info("无法显示代码行数图表：缺少必要的数据列")
 
@@ -544,6 +640,7 @@ def main_page():
         "target_branch": "目标分支",
         "updated_at": "更新时间",
         "commit_messages": "提交信息",
+        "delta": "代码变更",
         "score": st.column_config.ProgressColumn(
             "得分",
             format="%f",
@@ -572,6 +669,7 @@ def main_page():
             "branch": "分支",
             "updated_at": "更新时间",
             "commit_messages": "提交信息",
+            "delta": "代码变更",
             "score": st.column_config.ProgressColumn(
                 "得分",
                 format="%f",

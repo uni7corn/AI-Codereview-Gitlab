@@ -1,5 +1,8 @@
 ![Push图片](doc/img/open/ai-codereview-cartoon.png)
 
+[开源版](README.md) | 
+[Pro版](doc/pro.md)
+
 ## 项目简介
 
 本项目是一个基于大模型的自动化代码审查工具，帮助开发团队在代码合并或提交时，快速进行智能化的审查(Code Review)，提升代码质量和开发效率。
@@ -15,10 +18,18 @@
 - 📊 可视化 Dashboard
   - 集中展示所有 Code Review 记录，项目统计、开发者统计，数据说话，甩锅无门！
 - 🎭 Review Style 任你选
-  - 专业型 🤵：严谨细致，正式专业。 
-  - 讽刺型 😈：毒舌吐槽，专治不服（"这代码是用脚写的吗？"） 
-  - 绅士型 🌸：温柔建议，如沐春风（"或许这里可以再优化一下呢~"） 
+  - 专业型 🤵：严谨细致，正式专业。
+  - 讽刺型 😈：毒舌吐槽，专治不服（"这代码是用脚写的吗？"）
+  - 绅士型 🌸：温柔建议，如沐春风（"或许这里可以再优化一下呢~"）
   - 幽默型 🤪：搞笑点评，快乐改码（"这段 if-else 比我的相亲经历还曲折！"）
+- 🤖 Agentic Review 模式（可选）
+  - LLM 拥有工具调用能力（`read_file` / 沙箱 `run_command`），
+    可在本地克隆的代码库内自主探索，产出更全面的 review 结果。
+  - shell 默认仅允许读类命令（`ls` / `cat` / `grep` / `find` / `git log` …），
+    沙箱 + 路径越界 + 30s 超时三重防护。
+  - 任意阶段失败（clone / fetch / LLM / 工具调用）自动降级回 `diff_only`，
+    保证至少返回与原版一致的 review。
+  - 详细配置与开销说明见下方 [Agentic Review Mode](#agentic-review-mode-可选)
 
 **效果图:**
 
@@ -135,7 +146,7 @@ streamlit run ui.py --server.port=5002 --server.address=0.0.0.0
 
 在 GitLab 项目设置中，配置 Webhook：
 
-- URL：http://your-server-ip:5001/review/webhook
+- URL：http://{your-server-ip}:5001/review/webhook
 - Trigger Events：勾选 Push Events 和 Merge Request Events (不要勾选其它Event)
 - Secret Token：上面配置的 Access Token(可选)
 
@@ -147,18 +158,6 @@ streamlit run ui.py --server.port=5002 --server.address=0.0.0.0
 2. 网络访问要求
   - 请确保 GitLab 能够访问本系统。
   - 若内网环境受限，建议将系统部署在外网服务器上。
-
-### 配置 Gitea Webhook
-
-#### 1. 创建 Access Token
-- 在 Gitea 个人设置中创建 Access Token，并确保具备 `repo` 权限。
-
-#### 2. 配置 Webhook
-- 打开仓库 `Settings -> Webhooks -> Add Webhook`
-- URL：`http://your-server-ip:5001/review/webhook`
-- Header：`X-Gitea-Token` 设置为 `.env` 中的 `GITEA_ACCESS_TOKEN`（可选）
-- 触发事件：勾选 `Push events` 与 `Pull Request events`
-- Content Type：`application/json`
 
 ### 配置消息推送
 
@@ -174,21 +173,65 @@ streamlit run ui.py --server.port=5002 --server.address=0.0.0.0
 
 企业微信和飞书推送配置类似，具体参见 [常见问题](doc/faq.md)
 
-## 其它
+## Agentic Review Mode (可选)
 
-**1.如何对整个代码库进行Review?**
+`REVIEW_STRATEGY` 环境变量切换两种 review 策略：
 
-可以通过命令行工具对整个代码库进行审查。当前功能仍在不断完善中，欢迎试用并反馈宝贵意见！具体操作如下：
+- `diff_only`（默认）：仅对 diff 做 review，行为与原版完全一致。
+- `agentic`：LLM 拥有工具调用能力（read_file / 沙箱 shell），
+  可在本地克隆的代码库内自主探索，产出更全面的 review 结果。
+
+启用 agentic 模式：
 
 ```bash
-python -m biz.cmd.review
+REVIEW_STRATEGY=agentic
+REPO_CACHE_DIR=/var/data/repo_cache   # 可选，默认 data/repo_cache/
+AGENT_MAX_ITERATIONS=20               # 可选，默认 20
 ```
 
-运行后，请按照命令行中的提示进行操作即可。
+agentic 模式会按需在 `REPO_CACHE_DIR` 下克隆/更新目标项目（约 10MB~2GB / 项目）。
+任意阶段失败（clone / fetch / LLM / 工具调用异常）都会自动降级回 `diff_only`，
+保证至少返回与原版一致的 review。
 
-**2.其它问题**
+agentic 模式的额外开销：
+
+- 磁盘：建议预留 ≥ 50GB
+- 内存：单次 session 峰值 ~500MB
+- Token：单次 review 平均 5k - 50k tokens（diff_only 的 3 - 10 倍）
+- 时延：30s~5min / review
+
+⚠️ shell 工具有沙箱（命令白名单 + 黑名单 + 路径越界检查 + 30s 超时），
+默认只允许读类命令；如需放开请通过 `AGENT_SHELL_ALLOWLIST` / `AGENT_SHELL_BLOCKLIST` 调整。
+
+## 常见问题
 
 参见 [常见问题](doc/faq.md)
+
+## 相关项目
+
+### 1. Code Review Pro 版
+
+功能更丰富的 AI Code Review 版本。
+
+项目介绍与使用说明：[Code Review Pro 版](doc/pro.md)
+
+快速安装命令：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/sunmh207/AI-Codereview-Gitlab/refs/heads/main/scripts/pro/install.sh | bash
+```
+
+### 2. Entire Dashboard
+
+如果你正在使用 AI Agent 开发工具 (如: Cursor、Claude Code、Codex ...)，并希望对人机交互过程进行全面的记录与回溯分析，推荐使用 [Entire Dashboard](https://github.com/sunmh207/entire-dashboard)。该项目提供了完整的人机交互记录与可视化分析功能，可帮助你深入理解 AI Agent 的使用模式，优化交互体验，提升开发效率。
+
+### 3. Site Guard
+
+站点健康巡检与告警平台 —— "不让故障，悄悄发生"。对站点的可用性、SSL 证书有效期、关键路径进行持续探活巡检，异常或恢复时自动推送钉钉 / 飞书 / 企业微信告警；同时提供公开大屏（只读视图，无需登录即可查看整体健康度），适合内嵌运维大屏或分享给非管理员。
+
+开源地址：[site-guard](https://github.com/sunmh207/site-guard)
+
+推荐场景：当你运维多个站点，希望有一个轻量、自托管的"证书到期 + 关键路径存活 + IM 告警"一体化巡检方案时，Site Guard 是开箱即用的选择（Docker Compose 一键部署）。
 
 ## 交流
 
@@ -200,7 +243,3 @@ python -m biz.cmd.review
   <img src="doc/img/open/wechat.jpg" width="400" />
   <img src="doc/img/open/wechat_group.jpg" width="400" /> 
 </p>
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=sunmh207/AI-Codereview-Gitlab&type=Timeline)](https://www.star-history.com/#sunmh207/AI-Codereview-Gitlab&Timeline)
